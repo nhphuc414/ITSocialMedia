@@ -31,12 +31,12 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public List<User> getMembers(int id) {
-        return new ArrayList<>(this.getById(id).getCommunityUserSet().stream().map(CommunityUser::getUserId).toList());
+        return new ArrayList<>(this.getById(id).getCommunityUserList().stream().map(CommunityUser::getUserId).toList());
     }
 
     @Override
     public List<Post> getCommunityTimeLine(int id) {
-        List<Post> timeLine = new ArrayList<>(this.getById(id).getPostSet());
+        List<Post> timeLine = new ArrayList<>(this.getById(id).getPostList());
         Collections.reverse(timeLine);
         return timeLine;
     }

@@ -20,9 +20,9 @@ public class CommunityMapper {
     public CommunityResponse toResponse(Community community){
         if (community==null) return null;
         CommunityResponse res = mapper.map(community,CommunityResponse.class);
-        res.setCountUsers(community.getCommunityUserSet()==null?0:community.getCommunityUserSet().size());
-        res.setCountPosts(community.getPostSet()==null?0:community.getPostSet().size());
-        res.setAdministrators(community.getCommunityUserSet().stream().filter(
+        res.setCountUsers(community.getCommunityUserList()==null?0:community.getCommunityUserList().size());
+        res.setCountPosts(community.getPostList()==null?0:community.getPostList().size());
+        res.setAdministrators(community.getCommunityUserList().stream().filter(
                 c -> c.getRole().equals("ADMIN")
         ).map(c -> userMapper.toResponse(c.getUserId())).toList());
         return res;

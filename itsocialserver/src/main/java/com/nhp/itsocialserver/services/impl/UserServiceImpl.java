@@ -34,16 +34,14 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final Utils utils;
-    private final PostService postService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, CloudinaryService cloudinaryService, UserMapper userMapper, PasswordEncoder passwordEncoder, Utils utils, PostService postService) {
+    public UserServiceImpl(UserRepository userRepository, CloudinaryService cloudinaryService, UserMapper userMapper, PasswordEncoder passwordEncoder, Utils utils) {
         this.userRepository = userRepository;
         this.cloudinaryService = cloudinaryService;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.utils = utils;
-        this.postService = postService;
     }
 
     @Override
@@ -102,13 +100,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Post> getUserProfileTimeLine(int id) {
-        return findById(id).getPostSet().stream().filter(p->!p.getStatus().equals("HIDDEN")).toList();
+    public List<Post> getUserProfileTimeLine(int id, boolean isMyProfile) {
+        if (isMyProfile){
+            return this.findById(id).getPostList();
+        }
+        return findById(id).getPostList().stream().filter(p->!p.getStatus().equals("HIDDEN")).toList();
     }
-
     @Override
     public List<Community> getUserCommunities(int id) {
-        return findById(id).getCommunityUserSet().stream().map(CommunityUser::getCommunityId).toList();
+        return findById(id).getCommunityUserList().stream().map(CommunityUser::getCommunityId).toList();
     }
     @Override
     public void deleteById(int id) {

@@ -2,8 +2,11 @@ package com.nhp.itsocialserver.controllers;
 
 import com.nhp.itsocialserver.dtos.requests.UserRegisterRequest;
 import com.nhp.itsocialserver.dtos.responses.ModelResponse;
+import com.nhp.itsocialserver.dtos.responses.PostResponse;
 import com.nhp.itsocialserver.dtos.responses.UserResponse;
+import com.nhp.itsocialserver.mappers.PostMapper;
 import com.nhp.itsocialserver.mappers.UserMapper;
+import com.nhp.itsocialserver.pojos.Post;
 import com.nhp.itsocialserver.pojos.User;
 import com.nhp.itsocialserver.services.EmailService;
 import com.nhp.itsocialserver.services.UserService;
@@ -18,6 +21,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin
 @RequestMapping(value = "/api/user/", produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE},
@@ -29,6 +34,8 @@ public class UserController {
     private UserMapper userMapper;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private PostMapper postMapper;
 
     @GetMapping("/current-user/")
     public ResponseEntity<ModelResponse> getMyAccount() {
@@ -54,6 +61,34 @@ public class UserController {
             ModelResponse response = new ModelResponse(200,"User Info",
                     userMapper.toResponse(user));
                 return ResponseEntity.ok(response);
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+    @GetMapping("/{id}/timeline/")
+    public ResponseEntity<?> getUserTimeline(@PathVariable int id) {
+        ModelResponse response;
+        List<PostResponse> posts;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof UserDetails) {
+                String username = ((UserDetails) principal).getUsername();
+                if (userService.findByUsername(username).getId()==id){
+                    posts= userService.getUserProfileTimeLine(id,true).stream().map(p->postMapper.toResponse(p)).toList();
+                } else {
+                     posts= userService.getUserProfileTimeLine(id,false).stream().map(p->postMapper.toResponse(p)).toList();
+                }
+            if (posts.isEmpty()){
+                response= new ModelResponse(200,"User Timeline","No Post");}
+            else
+            {
+                System.out.println("abc");
+            response = new ModelResponse(200,"User Timeline",
+                    posts);
+            }
+                System.out.println("xyz");
+            return ResponseEntity.ok(response);
+            }
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }

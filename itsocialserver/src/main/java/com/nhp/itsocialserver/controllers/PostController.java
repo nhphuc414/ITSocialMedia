@@ -2,10 +2,15 @@ package com.nhp.itsocialserver.controllers;
 
 import com.nhp.itsocialserver.dtos.requests.PostRequest;
 import com.nhp.itsocialserver.dtos.requests.UserRegisterRequest;
+import com.nhp.itsocialserver.dtos.responses.CommentResponse;
 import com.nhp.itsocialserver.dtos.responses.ModelResponse;
+import com.nhp.itsocialserver.dtos.responses.ReactionResponse;
+import com.nhp.itsocialserver.mappers.CommentMapper;
 import com.nhp.itsocialserver.mappers.PostMapper;
+import com.nhp.itsocialserver.mappers.ReactionMapper;
 import com.nhp.itsocialserver.pojos.Comment;
 import com.nhp.itsocialserver.pojos.Post;
+import com.nhp.itsocialserver.pojos.Reaction;
 import com.nhp.itsocialserver.pojos.User;
 import com.nhp.itsocialserver.services.PostService;
 import com.nhp.itsocialserver.services.UserService;
@@ -32,14 +37,15 @@ public class PostController {
     private UserService userService;
     @Autowired
     private PostMapper postMapper;
-
+    @Autowired private CommentMapper commentMapper;
+    @Autowired private ReactionMapper reactionMapper;
     @GetMapping("/{id}/")
     public ResponseEntity<?> getPostInfo(@PathVariable int id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             Post post = postService.findById(id);
             if (post ==null)
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Post not found");
             ModelResponse response = new ModelResponse(200,"Post Info",
                     postMapper.toResponse(post));
             return ResponseEntity.ok(response);
@@ -51,14 +57,32 @@ public class PostController {
         ModelResponse response;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
-            List<Comment> comments = postService.getComments(id);
+            List<CommentResponse> comments = postService.getComments(id).stream().map(c->commentMapper.toResponse(c)).toList();
             if (comments.isEmpty()){
                 response = new ModelResponse(200,"Comments",
-                        "No comments");
+                        0);
             }
             else {
                 response = new ModelResponse(200,"Comments",
                         comments);
+            }
+            return ResponseEntity.ok(response);
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+    @GetMapping("/{id}/reactions/")
+    public ResponseEntity<?> getReaction(@PathVariable int id) {
+        ModelResponse response;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            List<ReactionResponse> reactions = postService.getReactions(id).stream().map(r->reactionMapper.toResponse(r)).toList();
+            if (reactions.isEmpty()){
+                response = new ModelResponse(200,"Reactions",
+                        0);
+            }
+            else {
+                response = new ModelResponse(200,"Reactions",
+                        reactions);
             }
             return ResponseEntity.ok(response);
         }

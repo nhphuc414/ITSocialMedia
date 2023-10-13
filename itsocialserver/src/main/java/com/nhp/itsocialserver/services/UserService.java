@@ -14,7 +14,7 @@ public interface UserService extends UserDetailsService {
     User findByEmail(String email);
     User create(UserRegisterRequest userRegisterRequest);
     User edit(int id, UserRegisterRequest userRegisterRequest);
-    List<Post> getUserProfileTimeLine(int id);
+    List<Post> getUserProfileTimeLine(int id,boolean isMyProfile);
     List<Community> getUserCommunities(int id);
     void deleteById(int id);
     boolean existsByUsername(String username);

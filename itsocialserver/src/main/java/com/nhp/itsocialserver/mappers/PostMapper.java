@@ -18,6 +18,7 @@ public class PostMapper {
     private ModelMapper mapper;
     @Autowired
     private CommunityMapper communityMapper;
+    @Autowired private UserMapper userMapper;
 
     public Post toModel(PostRequest postRequest) {
         return mapper.map(postRequest, Post.class);
@@ -25,9 +26,10 @@ public class PostMapper {
     public PostResponse toResponse(Post post){
             if (post==null) return null;
             PostResponse res = mapper.map(post, PostResponse.class);
+            res.setUser(userMapper.toResponse(post.getUserId()));
             res.setCommunity(communityMapper.toResponse(post.getCommunityId()));
-            res.setCountComments(post.getCommentSet()==null?0:post.getCommentSet().size());
-            res.setCountReactions(post.getReactionSet()==null?0:post.getReactionSet().size());
+            res.setCountComments(post.getCommentList()==null?0:post.getCommentList().size());
+            res.setCountReactions(post.getReactionList()==null?0:post.getReactionList().size());
             return res;
     }
 }

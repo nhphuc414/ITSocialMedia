@@ -24,8 +24,8 @@ public class CommentMapper {
     public CommentResponse toResponse(Comment comment){
         if (comment==null) return null;
         CommentResponse res = mapper.map(comment,CommentResponse.class);
-        res.setCountReaction(comment.getReactionSet()==null?0:comment.getReactionSet().size());
-        res.setCountReply(comment.getCommentSet()==null?0:comment.getCommentSet().size());
+        res.setCountReaction(comment.getReactionList()==null?0:comment.getReactionList().size());
+        res.setCountReply(comment.getCommentList()==null?0:comment.getCommentList().size());
         res.setUser(userMapper.toResponse(comment.getUserId()));
         res.setPost(postMapper.toResponse(comment.getPostId()));
         res.setCommentParent(this.toResponse(comment.getCommentParentId()));
