@@ -21,12 +21,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequestMapping(value = "/api/user/", produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE},
-        consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
+@RequestMapping(value = "/api/user")
 public class UserController {
     @Autowired
     private UserService userService;
@@ -37,34 +37,30 @@ public class UserController {
     @Autowired
     private PostMapper postMapper;
 
-    @GetMapping("/current-user/")
-    public ResponseEntity<ModelResponse> getMyAccount() {
+    @GetMapping("/current-user")
+    public ResponseEntity<?> getMyAccount(Principal user) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             Object principal = authentication.getPrincipal();
             if (principal instanceof UserDetails) {
                 String username = ((UserDetails) principal).getUsername();
-                ModelResponse response = new ModelResponse(200,"Current user",
-                        userMapper.toResponse(userService.findByUsername(username)));
-                return ResponseEntity.ok(response);
+                return ResponseEntity.ok(userMapper.toResponse(userService.findByUsername(username)));
             }
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
-    @GetMapping("/{id}/")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getUserInfo(@PathVariable int id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             User user = userService.findById(id);
             if (user==null)
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
-            ModelResponse response = new ModelResponse(200,"User Info",
-                    userMapper.toResponse(user));
-                return ResponseEntity.ok(response);
+            return ResponseEntity.ok(userMapper.toResponse(user));
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
-    @GetMapping("/{id}/timeline/")
+    @GetMapping("/{id}/timeline")
     public ResponseEntity<?> getUserTimeline(@PathVariable int id) {
         ModelResponse response;
         List<PostResponse> posts;
@@ -82,27 +78,19 @@ public class UserController {
                 response= new ModelResponse(200,"User Timeline","No Post");}
             else
             {
-                System.out.println("abc");
             response = new ModelResponse(200,"User Timeline",
                     posts);
             }
-                System.out.println("xyz");
             return ResponseEntity.ok(response);
             }
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
-    @PostMapping("/register/")
-    public ResponseEntity<?> create(@ModelAttribute UserRegisterRequest userRequest, BindingResult rs) {
-        if (rs.hasErrors()) {
-            return ResponseEntity.badRequest().body(rs.getErrorCount());
-        }
-        User user = userService.create(userRequest);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("User creation failed");
-        }
-        return new ResponseEntity<>(userMapper.toResponse(user), HttpStatus.CREATED);
+    @GetMapping("/isfollowing")
+    public ResponseEntity<Boolean> isFollowing(@RequestParam int userId,@RequestParam int followingId){
+        return new ResponseEntity<>(userService.isFollowing(userId,followingId),HttpStatus.OK);
     }
+
     @PutMapping("/update")
     public ResponseEntity<?> updateInfo(@ModelAttribute UserRegisterRequest userRegisterRequest){
         ModelResponse response;

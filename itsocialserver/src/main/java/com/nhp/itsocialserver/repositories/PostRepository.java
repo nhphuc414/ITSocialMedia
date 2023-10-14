@@ -8,4 +8,6 @@ import java.util.List;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post,Integer> {
+    List<Post> findAllByUserId_IdOrderByIdDesc(int userId);
+    void deleteById(int id);
 }

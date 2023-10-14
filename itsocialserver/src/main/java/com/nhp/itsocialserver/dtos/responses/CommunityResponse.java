@@ -17,7 +17,7 @@ public class CommunityResponse implements Serializable {
     private int id;
     private String name;
     private String description;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Date createdDate;
     private int countUsers;
     private int countPosts;

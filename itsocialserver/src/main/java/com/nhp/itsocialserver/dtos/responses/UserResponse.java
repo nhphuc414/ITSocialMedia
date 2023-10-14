@@ -18,8 +18,8 @@ public class UserResponse implements Serializable {
     private String email;
     private String fullName;
     private String role;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Date createdDate;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Date updatedDate;
 }

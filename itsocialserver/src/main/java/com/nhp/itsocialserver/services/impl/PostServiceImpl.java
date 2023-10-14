@@ -12,6 +12,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -32,7 +33,7 @@ public class PostServiceImpl implements PostService {
     private CommunityService communityService;
     @Override
     public List<Post> findAll() {
-        return postRepository.findAll().stream().filter(p->!p.getStatus().equals("HIDDEN")).toList();
+        return postRepository.findAll(Sort.by(Sort.Direction.DESC, "createdDate")).stream().filter(p->!p.getStatus().equals("HIDDEN")).toList();
     }
 
     @Override
@@ -54,7 +55,10 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Post create(PostRequest postRequest) {
+        System.out.println(postRequest);
+        System.out.println("==============");
         Post post = postMapper.toModel(postRequest);
+        System.out.println("==============");
         if (postRequest.getUserId()!=null)post.setUserId(userService.findById(Integer.parseInt(postRequest.getUserId())));
         if (postRequest.getCommunityId()!=null) post.setCommunityId(communityService.getById(Integer.parseInt(postRequest.getCommunityId())));
         if (postRequest.getImageFile() != null && !postRequest.getImageFile().isEmpty() && postRequest.getImageFile().getSize() > 0){

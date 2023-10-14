@@ -11,6 +11,7 @@ import java.util.List;
 public interface UserService extends UserDetailsService {
     User findById(int id);
     User findByUsername(String username);
+    boolean isFollowing(int userId,int followingId);
     User findByEmail(String email);
     User create(UserRegisterRequest userRegisterRequest);
     User edit(int id, UserRegisterRequest userRegisterRequest);

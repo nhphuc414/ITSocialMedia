@@ -24,27 +24,6 @@ import java.time.format.DateTimeFormatter;
 })
 public class WebAppContextConfig implements WebMvcConfigurer {
 
-
-    @Bean(name = "messageSource")
-    public MessageSource getMessageResource() {
-        ResourceBundleMessageSource messageResource = new ResourceBundleMessageSource();
-        messageResource.setBasenames("messages/messages");
-        messageResource.setDefaultEncoding("UTF-8");
-        messageResource.setUseCodeAsDefaultMessage(true);
-        return messageResource;
-    }
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
-    }
-    @Bean
-    public LocalValidatorFactoryBean validator() {
-        LocalValidatorFactoryBean b = new LocalValidatorFactoryBean();
-        b.setValidationMessageSource(getMessageResource());
-        return b;
-    }
-
     @Bean
     public ModelMapper modelMapper() {
         ModelMapper mapper = new ModelMapper();

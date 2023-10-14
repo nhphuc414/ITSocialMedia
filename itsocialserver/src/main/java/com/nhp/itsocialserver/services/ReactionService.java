@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface ReactionService {
     Reaction findById(int id);
+
+    boolean isReaction(int userId,int postId);
     Reaction create(ReactionRequest reactionRequest);
     Reaction edit(int id, ReactionRequest reactionRequest);
     void deleteById(int id);

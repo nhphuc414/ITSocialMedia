@@ -16,9 +16,9 @@ public class PostResponse implements Serializable {
     private CommunityResponse community;
     private String content;
     private String image;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Date createdDate;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Date updatedDate;
     private String status;
     private int countReactions;

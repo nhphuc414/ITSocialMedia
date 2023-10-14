@@ -12,6 +12,6 @@ public class ReactionResponse implements Serializable {
     private UserResponse user;
     private CommentResponse comment;
     private PostResponse post;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Date createdDate;
 }

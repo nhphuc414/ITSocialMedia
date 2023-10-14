@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+
 @Service
 @Transactional
 public class ReactionServiceImpl implements ReactionService {
@@ -32,6 +34,12 @@ public class ReactionServiceImpl implements ReactionService {
     @Override
     public Reaction findById(int id) {
         return reactionRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public boolean isReaction(int userId, int postId) {
+        Optional<Reaction> like = reactionRepository.findByUserId_IdAndPostId_Id(userId,postId);
+        return like.isPresent();
     }
 
     @Override

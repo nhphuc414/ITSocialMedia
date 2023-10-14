@@ -10,6 +10,6 @@ public class FollowResponse {
     private int id;
     private UserResponse user;
     private UserResponse following;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Date createdDate;
 }

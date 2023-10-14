@@ -36,8 +36,7 @@ public class FollowServiceImpl implements FollowService {
 
     @Override
     public void unfollow(FollowRequest followRequest) {
-        Follow follow = followRepository.findByUserId_IdAndFollowingId_Id(Integer.parseInt(followRequest.getUserId())
-                ,Integer.parseInt(followRequest.getFollowingId()));
-        if (follow!=null) followRepository.delete(follow);
+        Follow follow = followRepository.findByUserId_IdAndFollowingId_Id(Integer.parseInt(followRequest.getUserId()), Integer.parseInt(followRequest.getFollowingId())).orElse(null);
+        followRepository.delete(follow);
     }
 }

@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin
-@RequestMapping(value = "/api/reaction/", produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE},
+@RequestMapping(value = "/api/reaction", produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE},
         consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
 public class ReactionController {
     @Autowired
@@ -32,7 +32,7 @@ public class ReactionController {
     private ReactionMapper reactionMapper;
     @Autowired
     private  PostService postService;
-    @GetMapping("/{id}/")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getInfo(@PathVariable int id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
@@ -45,7 +45,7 @@ public class ReactionController {
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
-    @PostMapping("/add/")
+    @PostMapping("/add")
     public ResponseEntity<?> create(@ModelAttribute ReactionRequest reactionRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
@@ -61,6 +61,10 @@ public class ReactionController {
             }
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+    @GetMapping("/isliked")
+    public ResponseEntity<Boolean> isReaction(@RequestParam int userId,@RequestParam int postId){
+        return new ResponseEntity<>(reactionService.isReaction(userId,postId),HttpStatus.OK);
     }
     @DeleteMapping ("/{id}/")
     public ResponseEntity<?> delete(@PathVariable int id) {

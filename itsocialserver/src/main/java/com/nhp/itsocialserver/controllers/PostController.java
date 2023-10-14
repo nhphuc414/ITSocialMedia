@@ -4,6 +4,7 @@ import com.nhp.itsocialserver.dtos.requests.PostRequest;
 import com.nhp.itsocialserver.dtos.requests.UserRegisterRequest;
 import com.nhp.itsocialserver.dtos.responses.CommentResponse;
 import com.nhp.itsocialserver.dtos.responses.ModelResponse;
+import com.nhp.itsocialserver.dtos.responses.PostResponse;
 import com.nhp.itsocialserver.dtos.responses.ReactionResponse;
 import com.nhp.itsocialserver.mappers.CommentMapper;
 import com.nhp.itsocialserver.mappers.PostMapper;
@@ -28,8 +29,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequestMapping(value = "/api/post/", produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE},
-        consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
+@RequestMapping(value = "/api/post")
 public class PostController {
     @Autowired
     private PostService postService;
@@ -39,7 +39,7 @@ public class PostController {
     private PostMapper postMapper;
     @Autowired private CommentMapper commentMapper;
     @Autowired private ReactionMapper reactionMapper;
-    @GetMapping("/{id}/")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getPostInfo(@PathVariable int id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
@@ -52,7 +52,7 @@ public class PostController {
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
-    @GetMapping("/{id}/comments/")
+    @GetMapping("/{id}/comments")
     public ResponseEntity<?> getComments(@PathVariable int id) {
         ModelResponse response;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -70,7 +70,7 @@ public class PostController {
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
-    @GetMapping("/{id}/reactions/")
+    @GetMapping("/{id}/reactions")
     public ResponseEntity<?> getReaction(@PathVariable int id) {
         ModelResponse response;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -88,8 +88,9 @@ public class PostController {
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
-    @PostMapping("/add/")
+    @PostMapping("/add")
     public ResponseEntity<?> create(@ModelAttribute PostRequest postRequest) {
+        System.out.println(postRequest);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             Object principal = authentication.getPrincipal();
@@ -106,7 +107,7 @@ public class PostController {
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
-    @PutMapping("{id}/update/")
+    @PutMapping("{id}/update")
     public ResponseEntity<?> updatePost(@PathVariable int id,@ModelAttribute PostRequest postRequest){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
@@ -126,8 +127,22 @@ public class PostController {
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
-
-    @DeleteMapping ("/{id}/")
+    @GetMapping("/get")
+    public ResponseEntity<?> get(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            List<PostResponse> posts= postService.findAll().stream().map(p->postMapper.toResponse(p)).toList();
+            if (posts.isEmpty()){
+                return ResponseEntity.ok("No post");
+            }
+            else
+            {
+                return  ResponseEntity.ok(posts);
+            }
+            }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+    @DeleteMapping ("/{id}")
     public ResponseEntity<?> delete(@PathVariable int id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {

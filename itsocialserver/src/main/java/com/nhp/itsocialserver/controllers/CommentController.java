@@ -24,7 +24,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequestMapping(value = "/api/comment/", produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE},
+@RequestMapping(value = "/api/comment", produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE},
         consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
 public class CommentController {
     @Autowired
@@ -36,7 +36,7 @@ public class CommentController {
     @Autowired
     private ReactionMapper reactionMapper;
 
-    @GetMapping("/{id}/")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getInfo(@PathVariable int id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
@@ -49,7 +49,7 @@ public class CommentController {
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
-    @GetMapping("/{id}/comments/")
+    @GetMapping("/{id}/comments")
     public ResponseEntity<?> getComments(@PathVariable int id) {
         ModelResponse response;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -67,7 +67,7 @@ public class CommentController {
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
-    @GetMapping("/{id}/reactions/")
+    @GetMapping("/{id}/reactions")
     public ResponseEntity<?> getReaction(@PathVariable int id) {
         ModelResponse response;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -85,14 +85,13 @@ public class CommentController {
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
-    @PostMapping("/add/")
+    @PostMapping("/add")
     public ResponseEntity<?> create(@ModelAttribute CommentRequest commentRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             Object principal = authentication.getPrincipal();
             if (principal instanceof UserDetails) {
                 String username = ((UserDetails) principal).getUsername();
-                System.out.println(1);
                 commentRequest.setUserId(userService.findByUsername(username).getId().toString());
                 commentRequest.setStatus("PUBLIC");
                 Comment comment = commentService.create(commentRequest);
@@ -104,7 +103,7 @@ public class CommentController {
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
-    @PutMapping("{id}/update/")
+    @PutMapping("{id}/update")
     public ResponseEntity<?> update(@PathVariable int id,@ModelAttribute CommentRequest commentRequest){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
@@ -125,7 +124,7 @@ public class CommentController {
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
-    @DeleteMapping ("/{id}/")
+    @DeleteMapping ("/{id}")
     public ResponseEntity<?> delete(@PathVariable int id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {

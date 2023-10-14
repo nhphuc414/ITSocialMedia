@@ -2,16 +2,12 @@ package com.nhp.itsocialserver.services.impl;
 
 import com.nhp.itsocialserver.dtos.requests.UserRegisterRequest;
 import com.nhp.itsocialserver.mappers.UserMapper;
-import com.nhp.itsocialserver.pojos.Community;
-import com.nhp.itsocialserver.pojos.CommunityUser;
-import com.nhp.itsocialserver.pojos.Post;
-import com.nhp.itsocialserver.pojos.User;
+import com.nhp.itsocialserver.pojos.*;
+import com.nhp.itsocialserver.repositories.FollowRepository;
 import com.nhp.itsocialserver.repositories.UserRepository;
 import com.nhp.itsocialserver.services.CloudinaryService;
-import com.nhp.itsocialserver.services.PostService;
 import com.nhp.itsocialserver.services.UserService;
 import com.nhp.itsocialserver.utils.Utils;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,7 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -34,14 +30,16 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final Utils utils;
+    private final FollowRepository followRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, CloudinaryService cloudinaryService, UserMapper userMapper, PasswordEncoder passwordEncoder, Utils utils) {
+    public UserServiceImpl(UserRepository userRepository, CloudinaryService cloudinaryService, UserMapper userMapper, PasswordEncoder passwordEncoder, Utils utils, FollowRepository followRepository) {
         this.userRepository = userRepository;
         this.cloudinaryService = cloudinaryService;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.utils = utils;
+        this.followRepository = followRepository;
     }
 
     @Override
@@ -55,6 +53,12 @@ public class UserServiceImpl implements UserService {
             return null;
         else
             return users.get(0);
+    }
+
+    @Override
+    public boolean isFollowing(int userId, int followingId) {
+        Optional<Follow> follow = followRepository.findByUserId_IdAndFollowingId_Id(userId,followingId);
+        return follow.isPresent();
     }
 
     @Override
