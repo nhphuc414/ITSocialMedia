@@ -17,7 +17,7 @@ const Share = () => {
 
   const mutation = useMutation(
     (form) => {
-      return makeAuthRequest.post(endpoints["add-post"], form);
+      return makeAuthRequest().post(endpoints["add-post"], form);
     },
     {
       onSuccess: () => {
@@ -63,6 +63,7 @@ const Share = () => {
             <input
               type="file"
               id="file"
+              accept="image/*"
               style={{ display: "none" }}
               onChange={(e) => setFile(e.target.files[0])}
             />
@@ -72,14 +73,8 @@ const Share = () => {
                 <span>Add Image</span>
               </div>
             </label>
-            <div className="item">
-              <img src={Map} alt="" />
-              <span>Add Place</span>
-            </div>
-            <div className="item">
-              <img src={Friend} alt="" />
-              <span>Tag Friends</span>
-            </div>
+            
+            
           </div>
           <div className="right">
             <button onClick={handleClick}>Share</button>

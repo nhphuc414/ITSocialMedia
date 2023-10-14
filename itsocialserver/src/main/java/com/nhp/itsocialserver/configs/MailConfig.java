@@ -1,6 +1,7 @@
 package com.nhp.itsocialserver.configs;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -13,23 +14,25 @@ import java.util.Properties;
 public class MailConfig {
     @Autowired
     private Environment env;
+    @Value(value = "${spring.mail.username}")
+    private String mail_username;
+    @Value(value = "${spring.mail.password}")
+    private String mail_password;
 
     @Bean
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost(env.getProperty("mail.host"));
-        mailSender.setPort(env.getProperty("mail.port", Integer.class));
+        mailSender.setHost("smtp.gmail.com");
+        mailSender.setPort(587);
+        mailSender.setUsername(env.getProperty(mail_username));
+        mailSender.setPassword(env.getProperty(mail_password));
 
-        mailSender.setUsername(env.getProperty("mail.username"));
-        mailSender.setPassword(env.getProperty("mail.password"));
-
-        Properties props = mailSender.getJavaMailProperties();
+        Properties props = ((JavaMailSenderImpl) mailSender).getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.ssl.protocols", "TLSv1.2");
         props.put("mail.debug", "true");
-
+        props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
         return mailSender;
     }
 

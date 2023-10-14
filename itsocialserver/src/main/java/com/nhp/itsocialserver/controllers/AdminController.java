@@ -12,8 +12,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequestMapping(value = "/api/admin/", produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE},
-        consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
+@RequestMapping(value = "/api/admin/")
 public class AdminController {
     @Autowired
     private StatService statService;

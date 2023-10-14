@@ -25,7 +25,6 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-@CrossOrigin
 @RequestMapping(value = "/api/user")
 public class UserController {
     @Autowired
@@ -38,7 +37,7 @@ public class UserController {
     private PostMapper postMapper;
 
     @GetMapping("/current-user")
-    public ResponseEntity<?> getMyAccount(Principal user) {
+    public ResponseEntity<?> getMyAccount() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             Object principal = authentication.getPrincipal();
@@ -47,7 +46,7 @@ public class UserController {
                 return ResponseEntity.ok(userMapper.toResponse(userService.findByUsername(username)));
             }
         }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return ResponseEntity.badRequest().body("UNAUTHORIZE");
     }
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserInfo(@PathVariable int id) {
@@ -74,35 +73,22 @@ public class UserController {
                 } else {
                      posts= userService.getUserProfileTimeLine(id,false).stream().map(p->postMapper.toResponse(p)).toList();
                 }
-            if (posts.isEmpty()){
-                response= new ModelResponse(200,"User Timeline","No Post");}
-            else
-            {
-            response = new ModelResponse(200,"User Timeline",
-                    posts);
-            }
-            return ResponseEntity.ok(response);
+                return ResponseEntity.ok(posts);
             }
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
-    @GetMapping("/isfollowing")
-    public ResponseEntity<Boolean> isFollowing(@RequestParam int userId,@RequestParam int followingId){
-        return new ResponseEntity<>(userService.isFollowing(userId,followingId),HttpStatus.OK);
-    }
-
     @PutMapping("/update")
     public ResponseEntity<?> updateInfo(@ModelAttribute UserRegisterRequest userRegisterRequest){
-        ModelResponse response;
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         int userId = userService.findByUsername(auth.getName()).getId();
         User updatedUser = userService.edit(userId, userRegisterRequest);
         if (updatedUser != null) {
-            response = new ModelResponse(200, "Updated successful", userMapper.toResponse(updatedUser));
+            return ResponseEntity.ok(userMapper.toResponse(updatedUser));
         }
         else {
-            response = new ModelResponse(404, "User not found", null);
+            return ResponseEntity.badRequest().body("Wrong");
         }
-        return ResponseEntity.ok(response);
+
     }
 }

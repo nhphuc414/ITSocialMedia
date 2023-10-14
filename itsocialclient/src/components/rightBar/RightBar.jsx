@@ -1,3 +1,5 @@
+import { useQuery } from "@tanstack/react-query";
+import { endpoints, makeAuthRequest } from "../../axios";
 import "./rightBar.scss";
 
 const RightBar = () => {
@@ -6,12 +8,9 @@ const RightBar = () => {
       <div className="container">
         <div className="item">
           <span>Suggestions For You</span>
-          
         </div>
         <div className="item">
           <span>Latest Activities</span>
-        
-          
         </div>
       </div>
     </div>

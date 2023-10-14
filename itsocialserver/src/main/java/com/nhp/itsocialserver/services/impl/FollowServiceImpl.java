@@ -10,7 +10,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.util.*;
 
 @Service
 @Transactional
@@ -31,12 +31,27 @@ public class FollowServiceImpl implements FollowService {
         follow.setUserId(userService.findById(Integer.parseInt(followRequest.getUserId())));
         follow.setFollowingId(userService.findById(Integer.parseInt(followRequest.getFollowingId())));
         follow.setCreatedDate(new Date());
+        System.out.println(follow);
         return this.followRepository.saveAndFlush(follow);
     }
 
     @Override
     public void unfollow(FollowRequest followRequest) {
         Follow follow = followRepository.findByUserId_IdAndFollowingId_Id(Integer.parseInt(followRequest.getUserId()), Integer.parseInt(followRequest.getFollowingId())).orElse(null);
-        followRepository.delete(follow);
+        if(follow!=null)
+            followRepository.delete(follow);
+    }
+
+    @Override
+    public List<Follow> findallByUserId_Id(int id) {
+        List<Follow> following = this.followRepository.findAllByUserId_Id(id);
+        Collections.reverse(following);
+        return following;
+    }
+
+    @Override
+    public boolean isFollowing(int userId, int followingId) {
+        Optional<Follow> follow = followRepository.findByUserId_IdAndFollowingId_Id(userId,followingId);
+        return follow.isPresent();
     }
 }

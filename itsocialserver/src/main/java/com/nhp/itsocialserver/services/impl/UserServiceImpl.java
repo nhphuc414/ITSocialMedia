@@ -55,11 +55,7 @@ public class UserServiceImpl implements UserService {
             return users.get(0);
     }
 
-    @Override
-    public boolean isFollowing(int userId, int followingId) {
-        Optional<Follow> follow = followRepository.findByUserId_IdAndFollowingId_Id(userId,followingId);
-        return follow.isPresent();
-    }
+
 
     @Override
     public User findByEmail(String email) {

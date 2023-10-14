@@ -55,17 +55,13 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Post create(PostRequest postRequest) {
-        System.out.println(postRequest);
-        System.out.println("==============");
         Post post = postMapper.toModel(postRequest);
-        System.out.println("==============");
         if (postRequest.getUserId()!=null)post.setUserId(userService.findById(Integer.parseInt(postRequest.getUserId())));
         if (postRequest.getCommunityId()!=null) post.setCommunityId(communityService.getById(Integer.parseInt(postRequest.getCommunityId())));
         if (postRequest.getImageFile() != null && !postRequest.getImageFile().isEmpty() && postRequest.getImageFile().getSize() > 0){
             post.setImage(cloudinaryService.uploadImage(postRequest.getImageFile()));
         }
         post.setCreatedDate(new Date());
-        System.out.println(post.getUserId());
         return this.postRepository.saveAndFlush(post);
     }
 

@@ -21,9 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 
 @RestController
-@CrossOrigin
-@RequestMapping(value = "/api/auth", produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_JSON_VALUE}
-        ,consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
+@RequestMapping(value = "/api/auth")
 public class AuthController {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
@@ -48,12 +46,11 @@ public class AuthController {
             return ResponseEntity.ok(token);
         }
         catch (Exception e){
-            return ResponseEntity.status(400).body(new ModelResponse(400, "", "Wrong Username or password!!"));
+            return ResponseEntity.badRequest().body("Wrong Username or password!!");
         }
     }
     @PostMapping("/register")
     public ResponseEntity<?> create(@ModelAttribute UserRegisterRequest userRequest) {
-        System.out.println(userRequest);
         if (userService.findByUsername(userRequest.getUsername())!=null){
             return ResponseEntity.badRequest().body("Username already exists");
         }
@@ -67,6 +64,6 @@ public class AuthController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User creation failed");
         }
-        return new ResponseEntity<>(userMapper.toResponse(user), HttpStatus.CREATED);
+        return ResponseEntity.ok(userMapper.toResponse(user));
     }
 }

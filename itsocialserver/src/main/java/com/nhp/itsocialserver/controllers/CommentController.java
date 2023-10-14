@@ -24,8 +24,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequestMapping(value = "/api/comment", produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE},
-        consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
+@RequestMapping(value = "/api/comment")
 public class CommentController {
     @Autowired
     private CommentService commentService;

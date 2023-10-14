@@ -5,27 +5,24 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { endpoints, makeAuthRequest, makeRequest } from "../../axios";
 import moment from "moment";
 
-const Comments = ({ postId }) => {
+const Comments = ({ postId },{postStatus}) => {
   const [desc, setDesc] = useState("");
   const { currentUser } = useContext(AuthContext);
 
   const { isLoading, error, data } = useQuery(["comments"], () =>
     makeRequest.get(endpoints["get-comments-by-post-id"](postId)).then((res) => {
-      return res.data;
+      return res.data.data;
     })
   );
 
   const queryClient = useQueryClient();
-
   const mutation = useMutation(
     (newComment) => {
       let form = new FormData();
-      for (let field in newComment)
-         form.append(field, newComment[field]);
-        form.append("userId",currentUser.id);
-        form.append("commentParentId",null);
-        form.append("imageFile",null);
-      return makeAuthRequest.post("/comments", form);
+      form.append("postId",newComment.postId);
+      form.append("content",newComment.desc);
+      console.log(form);
+      return makeAuthRequest().post("http://localhost:8080/api/comment/add", form);
     },
     {
       onSuccess: () => {

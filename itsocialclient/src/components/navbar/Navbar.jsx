@@ -7,7 +7,7 @@ import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { AuthContext } from "../../context/authContext";
@@ -16,13 +16,15 @@ import { Logout } from "@mui/icons-material";
 const Navbar = () => {
   const { toggle, darkMode } = useContext(DarkModeContext);
   const { currentUser } = useContext(AuthContext);
+  const navigate =useNavigate()
+  const {logout} = useContext(AuthContext)
   return (
     <div className="navbar">
       <div className="left">
-        <Link to="/" style={{ textDecoration: "none" }}>
+        <Link to="/" style={{ textDecoration: "none", color: "inherit"}}>
           <span>IT Social</span>
         </Link>
-        <Link to="/" style={{ textDecoration: "none" }}>
+        <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
         <HomeOutlinedIcon />
         </Link>
         {darkMode ? (
@@ -39,6 +41,8 @@ const Navbar = () => {
         
         <EmailOutlinedIcon />
         <NotificationsOutlinedIcon />
+        <Link to={`/profile/${currentUser.id}`}
+                style={{ textDecoration: "none", color: "inherit" }}>
         <div className="user">
           <img
             src={ currentUser.image}
@@ -46,7 +50,9 @@ const Navbar = () => {
           />
           <span>{currentUser.fullName}</span>
         </div>
-        <Logout />
+        </Link>
+        <Logout onClick={()=>{logout()
+          navigate("/login")} } style={{ textDecoration: "none", color: "inherit" }}/>
       </div>
     </div>
   );

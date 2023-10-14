@@ -20,17 +20,25 @@ const Post = ({ post }) => {
   const { currentUser } = useContext(AuthContext);
 
   const { isLoading, error, data } = useQuery(["likes", post.id], () =>
-    makeAuthRequest.get(endpoints["get-reactions-by-post-id"](post.id)).then((res) => {
-      return res.data;
+    makeAuthRequest().get(endpoints["get-reactions-by-post-id"](post.id)).then((res) => {
+      return res.data.data;
     })
   );
 
   const queryClient = useQueryClient();
+  function hasUserInArray(dataArray,user) {
+    for (const item of dataArray) {
+      if (item.user.id===user.id) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   const mutation = useMutation(
     (liked) => {
-      if (liked) return makeAuthRequest.delete("/likes?postId=" + post.id);
-      return makeAuthRequest.post("/likes", { postId: post.id });
+      if (liked) return makeAuthRequest().delete(endpoints['delete-reaction-by-post'](post.id));
+      return makeAuthRequest().post(endpoints['add-post-reaction'](post.id));
     },
     {
       onSuccess: () => {
@@ -41,7 +49,7 @@ const Post = ({ post }) => {
   );
   const deleteMutation = useMutation(
     (postId) => {
-      return makeRequest.delete("/posts/" + postId);
+      return makeAuthRequest().delete(endpoints['delete-post'](postId));
     },
     {
       onSuccess: () => {
@@ -52,13 +60,12 @@ const Post = ({ post }) => {
   );
 
   const handleLike = () => {
-    // mutation.mutate(data.includes(currentUser));
+    mutation.mutate(hasUserInArray(data,currentUser));
   };
 
   const handleDelete = () => {
     deleteMutation.mutate(post.id);
   };
-
   return (
     <div className="post">
       <div className="container">
@@ -76,7 +83,7 @@ const Post = ({ post }) => {
             </div>
           </div>
           <MoreHorizIcon onClick={() => setMenuOpen(!menuOpen)} />
-          {menuOpen && post.user.id === currentUser.id && (
+          {menuOpen && (post.user.id === currentUser.id|| currentUser.role==="ADMIN" )&& (
             <button onClick={handleDelete}>delete</button>
           )}
         </div>
@@ -88,8 +95,7 @@ const Post = ({ post }) => {
           <div className="item">
             {isLoading ? (
               "loading"
-              //data.includes(currentUser)
-            ) : true ? (
+            ) : hasUserInArray(data,currentUser) ? (
               <FavoriteOutlinedIcon
                 style={{ color: "red" }}
                 onClick={handleLike}
@@ -97,7 +103,7 @@ const Post = ({ post }) => {
             ) : (
               <FavoriteBorderOutlinedIcon onClick={handleLike} />
             )}
-            {post.countReactions} Likes
+            {data?.length} Likes
           </div>
           <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
             <TextsmsOutlinedIcon />
@@ -108,7 +114,7 @@ const Post = ({ post }) => {
             Share
           </div>
         </div>
-        {commentOpen && <Comments postId={post.id} />}
+        {commentOpen && <Comments postId={post.id} postStatus = {post.status} />}
       </div>
     </div>
   );

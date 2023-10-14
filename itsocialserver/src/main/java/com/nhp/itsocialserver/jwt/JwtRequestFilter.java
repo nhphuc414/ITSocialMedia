@@ -6,7 +6,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,10 +20,11 @@ public class JwtRequestFilter extends OncePerRequestFilter{
     private UserService userService;
     @Autowired
     private JwtTokenUtils jwtTokenUtils;
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String requestTokenHeader = request.getHeader("Authorization");
+        Object obj = request.getParameterNames();
+        System.out.println(obj);
         System.out.println(requestTokenHeader);
         String username = null;
         String jwtToken = null;

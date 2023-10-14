@@ -27,7 +27,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Tag.findByCreatedDate", query = "SELECT t FROM Tag t WHERE t.createdDate = :createdDate"),
     @NamedQuery(name = "Tag.findByUpdatedDate", query = "SELECT t FROM Tag t WHERE t.updatedDate = :updatedDate")})
 public class Tag implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -10,12 +10,13 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Posts from "../../components/posts/Posts";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { makeRequest } from "../../axios";
+import { endpoints, makeAuthRequest, makeRequest } from "../../axios";
 import { useLocation } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
 import Update from "../../components/update/Update";
 import { useState } from "react";
+import { Email } from "@mui/icons-material";
 
 const Profile = () => {
   const [openUpdate, setOpenUpdate] = useState(false);
@@ -24,7 +25,7 @@ const Profile = () => {
   const userId = parseInt(useLocation().pathname.split("/")[2]);
 
   const { isLoading, error, data } = useQuery(["user"], () =>
-    makeRequest.get("/users/find/" + userId).then((res) => {
+  makeAuthRequest().get(endpoints['get-user-by-id'](userId)).then((res) => {
       return res.data;
     })
   );
@@ -32,18 +33,20 @@ const Profile = () => {
   const { isLoading: rIsLoading, data: relationshipData } = useQuery(
     ["relationship"],
     () =>
-      makeRequest.get("/relationships?followedUserId=" + userId).then((res) => {
+    makeAuthRequest().get(endpoints['isfollowing'](userId)).then((res) => {
         return res.data;
       })
   );
-
   const queryClient = useQueryClient();
-
   const mutation = useMutation(
     (following) => {
-      if (following)
-        return makeRequest.delete("/relationships?userId=" + userId);
-      return makeRequest.post("/relationships", { userId });
+      let form = new FormData();
+      form.append("userId", currentUser.id);
+      form.append("followingId", userId);
+      if (following) {
+        return makeAuthRequest().delete(endpoints['unfollow'](userId));
+      }
+      return makeAuthRequest().post(endpoints['follow'],form);
     },
     {
       onSuccess: () => {
@@ -54,7 +57,7 @@ const Profile = () => {
   );
 
   const handleFollow = () => {
-    mutation.mutate(relationshipData.includes(currentUser.id));
+    mutation.mutate(relationshipData);
   };
 
   return (
@@ -64,38 +67,19 @@ const Profile = () => {
       ) : (
         <>
           <div className="images">
-            <img src={"/upload/"+data.coverPic} alt="" className="cover" />
-            <img src={"/upload/"+data.profilePic} alt="" className="profilePic" />
+            <img src={data.bgImage} alt="" className="cover" />
+            <img src={data.image} alt="" className="profilePic" />
           </div>
           <div className="profileContainer">
             <div className="uInfo">
               <div className="left">
-                <a href="http://facebook.com">
-                  <FacebookTwoToneIcon fontSize="large" />
-                </a>
-                <a href="http://facebook.com">
-                  <InstagramIcon fontSize="large" />
-                </a>
-                <a href="http://facebook.com">
-                  <TwitterIcon fontSize="large" />
-                </a>
-                <a href="http://facebook.com">
-                  <LinkedInIcon fontSize="large" />
-                </a>
-                <a href="http://facebook.com">
-                  <PinterestIcon fontSize="large" />
-                </a>
               </div>
               <div className="center">
-                <span>{data.name}</span>
+                <span>{data.fullName}</span>
                 <div className="info">
                   <div className="item">
-                    <PlaceIcon />
-                    <span>{data.city}</span>
-                  </div>
-                  <div className="item">
-                    <LanguageIcon />
-                    <span>{data.website}</span>
+                    <Email />
+                    <span>{data.email}</span>
                   </div>
                 </div>
                 {rIsLoading ? (
@@ -104,8 +88,8 @@ const Profile = () => {
                   <button onClick={() => setOpenUpdate(true)}>update</button>
                 ) : (
                   <button onClick={handleFollow}>
-                    {relationshipData.includes(currentUser.id)
-                      ? "Following"
+                    {relationshipData
+                      ? "Unfollow"
                       : "Follow"}
                   </button>
                 )}

@@ -6,8 +6,8 @@
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
+    height: 80%;
+    background-color: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -16,7 +16,7 @@
     .wrapper {
       margin: auto;
       width: 40%;
-      height: 70%;
+      height: 100%;
       background-color: themed("bg");
       padding: 50px;
       z-index: 999;

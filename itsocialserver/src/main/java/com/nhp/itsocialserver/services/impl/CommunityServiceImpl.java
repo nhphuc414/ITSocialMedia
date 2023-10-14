@@ -25,7 +25,7 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public Community getById(int id) {
-        return communityRepository.findById(id).orElse(null);
+        return communityRepository.findById(id);
     };
 
 

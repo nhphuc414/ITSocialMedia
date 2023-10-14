@@ -14,30 +14,27 @@ const Register = () => {
   const navigate = useNavigate()
   const avatarFile = useRef(null);
   const bgImageFile = useRef(null);
-  const [err, setErr] = useState(false);
-
+  const [err, setErr] = useState(null);
   const handleChange = (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleClick =  (e) => {
-    const process = async () => {
-    let form = new FormData();
-    for (let field in inputs)
-         form.append(field, inputs[field]);
-    form.append("avatarFile", avatarFile.current.files[0]);
-    form.append("bgImageFile", bgImageFile.current.files[0]);
-    const res = await makeRequest.post(endpoints["register"], form);
-    console.log(res);
-    if (res?.data?.status === 400)
-        setErr(res.data);
-    if(res?.data?.status === 201)
-        navigate("/login");
-    };
     e.preventDefault();
-    if (inputs["password"] === inputs["confirmPassword"]) process();
-  };
-  console.log(err)
+      const process = async () => {
+        let form = new FormData();
+        for (let field in inputs)
+             form.append(field, inputs[field]);
+        if(avatarFile!==null)form.append("avatarFile", avatarFile.current.files[0]);
+        if(bgImageFile!==null)form.append("bgImageFile", bgImageFile.current.files[0]);
+        try{
+        const res = await makeRequest.post(endpoints["register"], form);
+        navigate("/login");
+      } catch(error){
+        setErr(error.response.data)
+  };}
+  process();
+}
 
   return (
     <div className="register">
@@ -54,36 +51,37 @@ const Register = () => {
         </div>
         <div className="right">
           <h1>Register</h1>
+          {err && err}
           <form>
             <input
               type="text"
               placeholder="Username"
               name="username"
-              onChange={handleChange}
+              onChange={handleChange} required
             />
             <input
               type="email"
               placeholder="Email"
               name="email"
-              onChange={handleChange}
+              onChange={handleChange}required
             />
             <input
               type="password"
               placeholder="Password"
               name="password"
-              onChange={handleChange}
+              onChange={handleChange}required
             />
             <input
               type="password"
               placeholder="Confirm Password"
               name="confirmPassword"
-              onChange={handleChange}
+              onChange={handleChange}required
             />
             <input
               type="text"
               placeholder="Full Name"
               name="fullName"
-              onChange={handleChange}
+              onChange={handleChange}required
             />
             <span>Avatar</span>
             <input
@@ -100,7 +98,6 @@ const Register = () => {
               accept="image/*"
               ref={bgImageFile} required
             />
-            {err && err}
             <button onClick={handleClick}>Register</button>
           </form>
         </div>

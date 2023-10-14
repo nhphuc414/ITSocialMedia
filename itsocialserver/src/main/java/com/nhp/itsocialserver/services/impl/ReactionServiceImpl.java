@@ -62,4 +62,9 @@ public class ReactionServiceImpl implements ReactionService {
     public void deleteById(int id) {
         this.reactionRepository.deleteById(id);
     }
+
+    @Override
+    public void deleteByPostId(int userId, int postId) {
+        this.reactionRepository.deleteByUserId_IdAndPostId_Id(userId,postId);
+    }
 }

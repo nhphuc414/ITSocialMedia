@@ -21,8 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin
-@RequestMapping(value = "/api/reaction", produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE},
-        consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
+@RequestMapping(value = "/api/reaction")
 public class ReactionController {
     @Autowired
     private ReactionService reactionService;
@@ -79,6 +78,19 @@ public class ReactionController {
                     reactionService.deleteById(id);
                     return ResponseEntity.status(200).body("Delete Successful");
                 }
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+    @DeleteMapping ("/delete")
+    public ResponseEntity<?> deleteByPost(@RequestParam int postId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof UserDetails) {
+                String username = ((UserDetails) principal).getUsername();
+                reactionService.deleteByPostId(userService.findByUsername(username).getId(),postId);
+                return ResponseEntity.status(200).body("Delete Successful");
             }
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);

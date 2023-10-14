@@ -58,14 +58,8 @@ public class PostController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             List<CommentResponse> comments = postService.getComments(id).stream().map(c->commentMapper.toResponse(c)).toList();
-            if (comments.isEmpty()){
-                response = new ModelResponse(200,"Comments",
-                        0);
-            }
-            else {
-                response = new ModelResponse(200,"Comments",
-                        comments);
-            }
+            response = new ModelResponse(200,"Comments",
+                    comments);
             return ResponseEntity.ok(response);
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -76,14 +70,8 @@ public class PostController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             List<ReactionResponse> reactions = postService.getReactions(id).stream().map(r->reactionMapper.toResponse(r)).toList();
-            if (reactions.isEmpty()){
-                response = new ModelResponse(200,"Reactions",
-                        0);
-            }
-            else {
-                response = new ModelResponse(200,"Reactions",
-                        reactions);
-            }
+            response = new ModelResponse(200,"Reactions",
+                    reactions);
             return ResponseEntity.ok(response);
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -107,7 +95,7 @@ public class PostController {
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
-    @PutMapping("{id}/update")
+    @PutMapping("/{id}/update")
     public ResponseEntity<?> updatePost(@PathVariable int id,@ModelAttribute PostRequest postRequest){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
@@ -132,17 +120,11 @@ public class PostController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             List<PostResponse> posts= postService.findAll().stream().map(p->postMapper.toResponse(p)).toList();
-            if (posts.isEmpty()){
-                return ResponseEntity.ok("No post");
-            }
-            else
-            {
-                return  ResponseEntity.ok(posts);
-            }
-            }
+            return ResponseEntity.ok(posts);
+        }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
-    @DeleteMapping ("/{id}")
+    @DeleteMapping ("/{id}/delete")
     public ResponseEntity<?> delete(@PathVariable int id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {

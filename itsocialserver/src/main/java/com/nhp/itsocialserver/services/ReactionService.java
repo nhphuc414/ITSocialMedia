@@ -15,4 +15,6 @@ public interface ReactionService {
     Reaction create(ReactionRequest reactionRequest);
     Reaction edit(int id, ReactionRequest reactionRequest);
     void deleteById(int id);
+
+    void deleteByPostId(int userId,int postId);
 }

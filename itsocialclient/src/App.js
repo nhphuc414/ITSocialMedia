@@ -5,6 +5,7 @@ import {
   RouterProvider,
   Outlet,
   Navigate,
+  useLocation,
 } from "react-router-dom";
 import Navbar from "./components/navbar/Navbar";
 import LeftBar from "./components/leftBar/LeftBar";
@@ -23,7 +24,6 @@ function App() {
   const { darkMode } = useContext(DarkModeContext);
 
   const queryClient = new QueryClient();
-
   const Layout = () => {
     return (
       <QueryClientProvider client={queryClient}>
@@ -41,14 +41,12 @@ function App() {
     );
   };
 
-  const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children }) => {
     if (!currentUser) {
       return <Navigate to="/login" />;
     }
-
     return children;
   };
-
   const router = createBrowserRouter([
     {
       path: "/",
@@ -68,15 +66,17 @@ function App() {
         },
       ],
     },
-    {
-      path: "/login",
-      element: <Login />,
-    },
-    {
-      path: "/register",
-      element: <Register />,
-    },
-  ]);
+    
+        {
+          path: "/login",
+          element: <Login />,
+        },
+        {
+          path: "/register",
+          element: <Register />,
+        },
+      ],
+    );
 
   return (
     <div>

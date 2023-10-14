@@ -9,30 +9,14 @@ const Update = ({ setOpenUpdate, user }) => {
   const [profile, setProfile] = useState(null);
   const [texts, setTexts] = useState({
     email: user.email,
+    fullName: user.fullName,
     password: user.password,
-    name: user.name,
-    city: user.city,
-    website: user.website,
+    confirmPassword:user.password,
   });
-
-  const upload = async (file) => {
-    console.log(file)
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await makeRequest.post("/upload", formData);
-      return res.data;
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   const handleChange = (e) => {
     setTexts((prev) => ({ ...prev, [e.target.name]: [e.target.value] }));
   };
-
   const queryClient = useQueryClient();
-
   const mutation = useMutation(
     (user) => {
       return makeRequest.put("/users", user);
@@ -47,15 +31,12 @@ const Update = ({ setOpenUpdate, user }) => {
 
   const handleClick = async (e) => {
     e.preventDefault();
-
-    //TODO: find a better way to get image URL
-    
-    let coverUrl;
-    let profileUrl;
-    coverUrl = cover ? await upload(cover) : user.coverPic;
-    profileUrl = profile ? await upload(profile) : user.profilePic;
-    
-    mutation.mutate({ ...texts, coverPic: coverUrl, profilePic: profileUrl });
+    let form = new FormData();
+    for (let field in texts)
+    form.append(field, texts[field]);
+    if (cover!==null) form.append("avatarFile",profile);
+    if (cover!==null) form.append("bgImageFile",cover);
+    mutation.mutate({form});
     setOpenUpdate(false);
     setCover(null);
     setProfile(null);
@@ -73,7 +54,7 @@ const Update = ({ setOpenUpdate, user }) => {
                   src={
                     cover
                       ? URL.createObjectURL(cover)
-                      : "/upload/" + user.coverPic
+                      : user.image
                   }
                   alt=""
                 />
@@ -93,7 +74,7 @@ const Update = ({ setOpenUpdate, user }) => {
                   src={
                     profile
                       ? URL.createObjectURL(profile)
-                      : "/upload/" + user.profilePic
+                      : user.bgImage
                   }
                   alt=""
                 />
@@ -107,6 +88,13 @@ const Update = ({ setOpenUpdate, user }) => {
               onChange={(e) => setProfile(e.target.files[0])}
             />
           </div>
+          <label>Full Name</label>
+          <input
+            type="text"
+            value={texts.fullName}
+            name="name"
+            onChange={handleChange}
+          />
           <label>Email</label>
           <input
             type="text"
@@ -121,25 +109,11 @@ const Update = ({ setOpenUpdate, user }) => {
             name="password"
             onChange={handleChange}
           />
-          <label>Name</label>
+          <label>Confirm Password</label>
           <input
             type="text"
-            value={texts.name}
-            name="name"
-            onChange={handleChange}
-          />
-          <label>Country / City</label>
-          <input
-            type="text"
-            name="city"
-            value={texts.city}
-            onChange={handleChange}
-          />
-          <label>Website</label>
-          <input
-            type="text"
-            name="website"
-            value={texts.website}
+            value={texts.confirmPassword}
+            name="password"
             onChange={handleChange}
           />
           <button onClick={handleClick}>Update</button>

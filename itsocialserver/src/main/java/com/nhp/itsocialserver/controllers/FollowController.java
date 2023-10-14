@@ -19,15 +19,42 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin
-@RequestMapping(value = "/api/follow", produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.MULTIPART_FORM_DATA_VALUE},
-        consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
+@RequestMapping(value = "/api/follow")
 public class FollowController {
     @Autowired
     private FollowService followService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private  FollowMapper followMapper;
+
+    @GetMapping("{followingId}/is-following")
+    public ResponseEntity<Boolean> isFollowing(@PathVariable int followingId){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+            String username = ((UserDetails) principal).getUsername();
+            int userId = userService.findByUsername(username).getId();
+            return new ResponseEntity<>(followService.isFollowing(userId, followingId), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+    @GetMapping("/get-all-following")
+    public ResponseEntity<?> getAllFollowing(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+            String username = ((UserDetails) principal).getUsername();
+            int userId = userService.findByUsername(username).getId();
+            List<FollowResponse> following = followService.findallByUserId_Id(userId).stream().map(f->followMapper.toResponse(f)).toList();
+            return ResponseEntity.ok(following);
+        }
+        return ResponseEntity.badRequest().body("UNAUTHORIZED");
+    }
     @PostMapping("/add")
     public ResponseEntity<?> create(@ModelAttribute FollowRequest followRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -42,17 +69,18 @@ public class FollowController {
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
-    @DeleteMapping ("/delete")
-    public ResponseEntity<?> delete(@ModelAttribute FollowRequest followRequest) {
+    @DeleteMapping("{followingId}/delete")
+    public ResponseEntity<?> delete(@PathVariable String followingId) {
+        System.out.println(followingId);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             Object principal = authentication.getPrincipal();
             String username = ((UserDetails) principal).getUsername();
-            if(userService.findByUsername(username).getId().toString().equals(followRequest.getUserId()))
-            {
-                followService.unfollow(followRequest);
-                return new ResponseEntity<>("Unfollowed",HttpStatus.OK);
-            }
+            FollowRequest followRequest = new FollowRequest();
+            followRequest.setUserId(userService.findByUsername(username).getId().toString());
+            followRequest.setFollowingId(String.valueOf(followingId));
+            followService.unfollow(followRequest);
+            return new ResponseEntity<>("Unfollowed",HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }

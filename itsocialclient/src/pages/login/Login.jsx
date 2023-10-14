@@ -11,12 +11,11 @@ const Login = () => {
   const [err, setErr] = useState(null);
 
   const navigate = useNavigate()
-
+  
   const handleChange = (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
   const { login } = useContext(AuthContext);
-
   const handleLogin = async (e) => {
     e.preventDefault();
     let form = new FormData()
@@ -25,20 +24,17 @@ const Login = () => {
     try {
       await login(form);
       navigate("/")
-    } catch (err) {
-      setErr(err);
+    } catch (error) {
+      setErr(error.response.data);
     }
   };
-
   return (
     <div className="login">
       <div className="card">
         <div className="left">
           <h1>Hello World.</h1>
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero cum,
-            alias totam numquam ipsa exercitationem dignissimos, error nam,
-            consequatur.
+            This is my project.
           </p>
           <span>Don't you have an account?</span>
           <Link to="/register">
@@ -47,6 +43,7 @@ const Login = () => {
         </div>
         <div className="right">
           <h1>Login</h1>
+          {err && err}
           <form>
             <input
               type="text"
@@ -60,7 +57,7 @@ const Login = () => {
               name="password"
               onChange={handleChange}
             />
-            {err && err}
+            
             <button onClick={handleLogin}>Login</button>
           </form>
         </div>
