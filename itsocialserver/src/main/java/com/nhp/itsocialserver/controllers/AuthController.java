@@ -49,6 +49,19 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Wrong Username or password!!");
         }
     }
+    @PostMapping("/login-google")
+    public ResponseEntity<?> loginGoogle(@ModelAttribute UserRegisterRequest request) {
+        if (!userService.existsByUsername(request.getUsername())
+                && !userService.existsByEmail(request.getEmail())) {
+            userService.create(request);
+        }
+        UserDetails userDetails = userService
+                .loadUserByUsername(request.getUsername());
+        if (userDetails==null) userDetails = userService.loadUserByUsername(userService.findByEmail(request.getEmail()).getUsername());
+        final String token = jwtTokenUtils.generateToken(userDetails);
+        return ResponseEntity.ok(token);
+
+    }
     @PostMapping("/register")
     public ResponseEntity<?> create(@ModelAttribute UserRegisterRequest userRequest) {
         if (userService.findByUsername(userRequest.getUsername())!=null){
@@ -62,7 +75,7 @@ public class AuthController {
         }
         User user = userService.create(userRequest);
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("User creation failed");
+            return ResponseEntity.badRequest().body("User creation failed");
         }
         return ResponseEntity.ok(userMapper.toResponse(user));
     }

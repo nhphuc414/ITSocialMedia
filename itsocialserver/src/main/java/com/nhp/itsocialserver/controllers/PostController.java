@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin
 @RequestMapping(value = "/api/post")
 public class PostController {
     @Autowired
@@ -78,7 +77,6 @@ public class PostController {
     }
     @PostMapping("/add")
     public ResponseEntity<?> create(@ModelAttribute PostRequest postRequest) {
-        System.out.println(postRequest);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             Object principal = authentication.getPrincipal();

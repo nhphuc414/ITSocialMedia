@@ -14,7 +14,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
-@Component
+
 public class JwtRequestFilter extends OncePerRequestFilter{
     @Autowired
     private UserService userService;
@@ -22,10 +22,7 @@ public class JwtRequestFilter extends OncePerRequestFilter{
     private JwtTokenUtils jwtTokenUtils;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String requestTokenHeader = request.getHeader("Authorization");
-        Object obj = request.getParameterNames();
-        System.out.println(obj);
-        System.out.println(requestTokenHeader);
+        String requestTokenHeader = request.getHeader("authorization");
         String username = null;
         String jwtToken = null;
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
@@ -40,8 +37,6 @@ public class JwtRequestFilter extends OncePerRequestFilter{
         } else {
             logger.warn("JWT Token does not begin with Bearer String");
         }
-
-        // Once we get the token validate it.
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userService.loadUserByUsername(username);
             if (jwtTokenUtils.validateToken(jwtToken, userDetails)) {

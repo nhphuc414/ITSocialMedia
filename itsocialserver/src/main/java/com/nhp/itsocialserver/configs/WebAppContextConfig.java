@@ -1,6 +1,7 @@
 package com.nhp.itsocialserver.configs;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -21,9 +22,6 @@ import java.time.format.DateTimeFormatter;
 @Configuration
 @EnableWebMvc
 @EnableTransactionManagement
-@ComponentScan(basePackages = {
-        "com.nhp.itsocialserver"
-})
 public class WebAppContextConfig implements WebMvcConfigurer {
 
     @Bean
@@ -34,8 +32,9 @@ public class WebAppContextConfig implements WebMvcConfigurer {
     }
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("http://localhost:3000")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
+        registry.addMapping("/**").allowedOrigins("http://localhost:3000").allowedHeaders("Authorization")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .maxAge(3600);;
     }
     @Bean
     public DateFormat dateFormatter() {

@@ -13,16 +13,16 @@ import RightBar from "./components/rightBar/RightBar";
 import Home from "./pages/home/Home";
 import Profile from "./pages/profile/Profile";
 import "./style.scss";
+import "./components/chat/chatstyle.scss";
 import { useContext } from "react";
 import { DarkModeContext } from "./context/darkModeContext";
 import { AuthContext } from "./context/authContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
+import ChatHome from "./components/chat/ChatHome";
+import 'react-toastify/dist/ReactToastify.css';
 function App() {
   const { currentUser } = useContext(AuthContext);
-
   const { darkMode } = useContext(DarkModeContext);
-
   const queryClient = new QueryClient();
   const Layout = () => {
     return (
@@ -47,6 +47,19 @@ const ProtectedRoute = ({ children }) => {
     }
     return children;
   };
+const AnonymousRoute = ({ children }) => {
+    const { state } = useLocation();
+    if (!currentUser)
+      return children;
+    return <Navigate to={state?.redirect || "/"} />;
+  }  
+  const AdminRoute = ({ children }) => {
+    const { state } = useLocation();
+    if (currentUser!==null && currentUser.role=="ADMIN")
+      return children;
+    return <Navigate to={state?.redirect || "/"} />;
+  }
+  
   const router = createBrowserRouter([
     {
       path: "/",
@@ -66,7 +79,21 @@ const ProtectedRoute = ({ children }) => {
         },
       ],
     },
-    
+    {
+      path: "/chat",
+      element: (
+        <ProtectedRoute>
+          <ChatHome />
+        </ProtectedRoute>
+      ),
+    },
+    {path: "/",
+    element: (
+      <AnonymousRoute>
+        <Outlet />
+      </AnonymousRoute>
+    ),
+    children:[
         {
           path: "/login",
           element: <Login />,
@@ -76,12 +103,33 @@ const ProtectedRoute = ({ children }) => {
           element: <Register />,
         },
       ],
+      },
+      {
+        path: "/admin",
+      element: (
+        <AdminRoute>
+          <Outlet />
+        </AdminRoute>
+      ),
+      children:[
+        {
+          path: "user",
+          element: <Login />,
+        },
+        {
+          path: "stat",
+          element: <Register />,
+        },
+      ],
+      },
+      
+      ],
     );
 
   return (
-    <div>
+    <>
       <RouterProvider router={router} />
-    </div>
+    </>
   );
 }
 

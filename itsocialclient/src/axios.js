@@ -1,9 +1,10 @@
-import { Cookie } from "@mui/icons-material";
+
 import axios from "axios";
 import cookie from "react-cookies";
 const SERVER = "http://localhost:8080";
 export const endpoints = {
   "login": `${SERVER}/api/auth/login`,
+  "login-google": `${SERVER}/api/auth/login-google`,
   "current-user": `${SERVER}/api/user/current-user`,
   "get-user-by-id": (userId) => `${SERVER}/api/user/${userId}`,
   "register": `${SERVER}/api/auth/register`,

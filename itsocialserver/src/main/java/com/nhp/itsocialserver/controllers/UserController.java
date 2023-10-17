@@ -46,7 +46,7 @@ public class UserController {
                 return ResponseEntity.ok(userMapper.toResponse(userService.findByUsername(username)));
             }
         }
-        return ResponseEntity.badRequest().body("UNAUTHORIZE");
+        return ResponseEntity.badRequest().body("UNAUTHORIZED");
     }
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserInfo(@PathVariable int id) {
@@ -61,7 +61,6 @@ public class UserController {
     }
     @GetMapping("/{id}/timeline")
     public ResponseEntity<?> getUserTimeline(@PathVariable int id) {
-        ModelResponse response;
         List<PostResponse> posts;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {

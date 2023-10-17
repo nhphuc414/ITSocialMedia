@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/authContext";
 import "./login.scss";
+import LoginGoogleBtn from "../../components/googlebtn/GoogleButton";
 
 const Login = () => {
   const [inputs, setInputs] = useState({
@@ -22,9 +23,10 @@ const Login = () => {
     for (let field in inputs)
          form.append(field, inputs[field]);
     try {
-      await login(form);
+      await login(form,false);
       navigate("/")
     } catch (error) {
+      console.log(error.body)
       setErr(error.response.data);
     }
   };
@@ -57,8 +59,8 @@ const Login = () => {
               name="password"
               onChange={handleChange}
             />
-            
-            <button onClick={handleLogin}>Login</button>
+            <button  className="button" onClick={handleLogin}>Login</button>
+            <LoginGoogleBtn className="button"/>
           </form>
         </div>
       </div>

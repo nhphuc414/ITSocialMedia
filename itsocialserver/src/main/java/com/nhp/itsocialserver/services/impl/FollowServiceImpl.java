@@ -31,7 +31,6 @@ public class FollowServiceImpl implements FollowService {
         follow.setUserId(userService.findById(Integer.parseInt(followRequest.getUserId())));
         follow.setFollowingId(userService.findById(Integer.parseInt(followRequest.getFollowingId())));
         follow.setCreatedDate(new Date());
-        System.out.println(follow);
         return this.followRepository.saveAndFlush(follow);
     }
 

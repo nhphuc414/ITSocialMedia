@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin
 @RequestMapping(value = "/api/follow")
 public class FollowController {
     @Autowired
@@ -33,7 +32,7 @@ public class FollowController {
     private  FollowMapper followMapper;
 
     @GetMapping("{followingId}/is-following")
-    public ResponseEntity<Boolean> isFollowing(@PathVariable int followingId){
+    public ResponseEntity<?> isFollowing(@PathVariable int followingId){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             Object principal = authentication.getPrincipal();
@@ -71,7 +70,6 @@ public class FollowController {
     }
     @DeleteMapping("{followingId}/delete")
     public ResponseEntity<?> delete(@PathVariable String followingId) {
-        System.out.println(followingId);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             Object principal = authentication.getPrincipal();

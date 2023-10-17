@@ -15,6 +15,7 @@ public class UserRegisterRequest implements Serializable {
     private MultipartFile avatarFile;
     private MultipartFile bgImageFile;
     private String role;
+    private String avatar;
     {
         this.role = "USER";
     }

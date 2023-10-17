@@ -68,15 +68,20 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(userRegisterRequest.getPassword()));
         if (utils.isNotEmptyFile(userRegisterRequest.getAvatarFile() )){
             user.setImage(cloudinaryService.uploadImage(userRegisterRequest.getAvatarFile()));
+        } else{
+            if (userRegisterRequest.getAvatar()!=null &&
+                    !userRegisterRequest.getAvatar().isEmpty() &&
+            !userRegisterRequest.getAvatar().isBlank()){
+                user.setImage(userRegisterRequest.getAvatar());
+            } else user.setImage("https://res.cloudinary.com/dm5nn54wh/image/upload/v1697202418/qkhz0wz7getw9vqvex2w.jpg");
         }
-        if (utils.isNotEmptyFile(userRegisterRequest.getAvatarFile() )){
+        if (utils.isNotEmptyFile(userRegisterRequest.getBgImageFile() )){
             user.setBgImage(cloudinaryService.uploadImage(userRegisterRequest.getBgImageFile()));
-        }
+        } else user.setBgImage("https://res.cloudinary.com/dm5nn54wh/image/upload/v1697202421/rveknrmarmysphqdeahm.jpg");
         user.setRole("USER");
         user.setCreatedDate(new Date());
         return this.userRepository.saveAndFlush(user);
     }
-
     @Override
     public User edit(int id, UserRegisterRequest userRegisterRequest) {
         User user = this.findById(id);

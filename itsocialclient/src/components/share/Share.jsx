@@ -1,11 +1,10 @@
 import "./share.scss";
-import Image from "../../assets/img.png";
-import Map from "../../assets/map.png";
-import Friend from "../../assets/friend.png";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../context/authContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { endpoints, makeAuthRequest, makeRequest } from "../../axios";
+import { toast } from "react-toastify";
+import { Image } from "@mui/icons-material";
 const Share = () => {
   const [file, setFile] = useState(null);
   const [desc, setDesc] = useState("");
@@ -22,8 +21,30 @@ const Share = () => {
     {
       onSuccess: () => {
         // Invalidate and refetch
+        toast.success('Add post success!', {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          });
         queryClient.invalidateQueries(["posts"]);
       },
+      onError: ()=>{
+        toast.error('Fail to add post', {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          });
+      }
     }
   );
 
@@ -69,7 +90,7 @@ const Share = () => {
             />
             <label htmlFor="file">
               <div className="item">
-                <img src={Image} alt="" />
+                <Image/>
                 <span>Add Image</span>
               </div>
             </label>

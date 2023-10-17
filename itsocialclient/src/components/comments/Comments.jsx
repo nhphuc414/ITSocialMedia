@@ -4,6 +4,7 @@ import { AuthContext } from "../../context/authContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { endpoints, makeAuthRequest, makeRequest } from "../../axios";
 import moment from "moment";
+import { toast } from "react-toastify";
 
 const Comments = ({ postId },{postStatus}) => {
   const [desc, setDesc] = useState("");
@@ -29,6 +30,18 @@ const Comments = ({ postId },{postStatus}) => {
         // Invalidate and refetch
         queryClient.invalidateQueries(["comments"]);
       },
+      onError: ()=>{
+        toast.error('Fail to add comment', {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          });
+      }
     }
   );
 
