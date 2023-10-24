@@ -1,12 +1,12 @@
 .register {
-  height: 100vh;
+  height: 100%;
   background-color: rgb(193, 190, 255);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: auto;
   .card {
-    width: 50%;
+    width: 100%;
     display: flex;
     flex-direction: row-reverse;
     background-color: white;
@@ -17,7 +17,7 @@
     .left {
       flex: 1;
       background: linear-gradient(rgba(39, 11, 96, 0.5), rgba(39, 11, 96, 0.5)),
-        url("https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600")
+        url("https://res.cloudinary.com/dm5nn54wh/image/upload/v1698144296/mygov_1627119749457663_d1k8fw.png")
           center;
       background-size: cover;
       padding: 50px;

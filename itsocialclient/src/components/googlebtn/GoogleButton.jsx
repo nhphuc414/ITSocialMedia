@@ -29,7 +29,7 @@ const LoginGoogleBtn = () => {
       };
     return (
         <>
-        <GoogleOAuthProvider clientId={1052482945968-r7a44l95g2h8a6b1nl2utq39d0cmt63u.apps.googleusercontent.com}>
+        <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
             <GoogleLogin 
                 onSuccess={(res) => {
                     handleLoginGoogle(jwt_decode(res.credential))

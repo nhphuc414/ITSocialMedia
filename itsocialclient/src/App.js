@@ -20,6 +20,7 @@ import { AuthContext } from "./context/authContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ChatHome from "./components/chat/ChatHome";
 import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
 function App() {
   const { currentUser } = useContext(AuthContext);
   const { darkMode } = useContext(DarkModeContext);
@@ -129,6 +130,7 @@ const AnonymousRoute = ({ children }) => {
   return (
     <>
       <RouterProvider router={router} />
+      <ToastContainer/>
     </>
   );
 }
